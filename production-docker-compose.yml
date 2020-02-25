@@ -1,5 +1,7 @@
 version: '3'
 services:
+  postgres:
+    image: 'postgres'
   client:
     ports:
       - "3000:3000"
@@ -10,11 +12,13 @@ services:
       - ./client-react:/app
       - /app/node_modules
   api:
+    depends_on:
+      - postgres
     # TODO add migrations after 'done;' below:
     # command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 1; done; python run-dev.py'
 
     build:
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
       context: ./server/
     volumes:
       - ./server:/app
@@ -22,14 +26,11 @@ services:
       - "5000:5000"
     tty: true
     stdin_open: true
+    env_file:
+      - ./.env
     environment:
       - PORT=5000
       - FLASK_ENV=development
       #TODO Change to real variables/create secrets file.
-      - DB_HOST=postgres
-      - DB_USER=postgres
-      - DB_PORT=5432
-      - DB_NAME=postgres
-      - DB_PASSWORD=
       # NOTE do this
       - PYTHONPATH=
