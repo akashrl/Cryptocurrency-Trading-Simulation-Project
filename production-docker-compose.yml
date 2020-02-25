@@ -1,7 +1,5 @@
 version: '3'
 services:
-  postgres:
-    image: 'postgres'
   client:
     ports:
       - "3000:3000"
@@ -12,8 +10,6 @@ services:
       - ./client-react:/app
       - /app/node_modules
   api:
-    depends_on:
-      - postgres
     # TODO add migrations after 'done;' below:
     # command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 1; done; python run-dev.py'
 
