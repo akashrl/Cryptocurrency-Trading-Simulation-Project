@@ -21,7 +21,7 @@ services:
     #command: gunicorn --bind 0.0.0.0:5000 wsgi:create_app()
 
     build:
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
       context: ./server/
     volumes:
       - ./server:/app
