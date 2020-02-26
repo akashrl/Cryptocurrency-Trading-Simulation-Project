@@ -1,5 +1,11 @@
 version: '3'
 services:
+  #proxy:
+  # build:
+  #   dockerfile: Dockerfile.prod
+  #   context: ./proxy
+  # ports:
+  #   - "80:80"
   client:
     ports:
       - "3000:3000"
@@ -12,6 +18,7 @@ services:
   api:
     # TODO add migrations after 'done;' below:
     # command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 1; done; python run-dev.py'
+    command: gunicorn --bind 0.0.0.0:5000 wsgi:app
 
     build:
       dockerfile: Dockerfile.prod
