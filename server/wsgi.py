@@ -1,4 +1,4 @@
-from main import app
+from main import create_app
 
 
 # This is the entry point for the production server.
@@ -6,6 +6,6 @@ from main import app
 # Sill need to research this
 if __name__ == '__main__':
     # TODO do this before deploying to production
-    app.run()
+    create_app().run()
     # raise NotImplementedError("In development, just do `python run.py`")
 

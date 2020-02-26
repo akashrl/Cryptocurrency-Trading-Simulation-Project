@@ -7,12 +7,12 @@ from flask_cors import CORS
 from auth.routes import auth_bp
 from errors.handlers import errors_bp
 from db import * # FIXME get rid of * when you have db migrations
-app = Flask(__name__)
 
 def create_app():
     db.create_tables([Profile, AuthToken, Game, GameProfile, Coin, GameCoin,
         Ticker, Trade, GameProfileCoin])
     # FIXME get rid of this when you have db migrations
+    app = Flask(__name__)
     CORS(app)
 
     @app.before_request

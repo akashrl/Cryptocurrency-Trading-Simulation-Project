@@ -3,4 +3,4 @@ workdir /app
 copy package.json ./
 run npm i --verbose
 copy . .
-cmd ["npm", "start"]
+cmd ["npm", "run", "build"]
