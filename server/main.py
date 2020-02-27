@@ -1,7 +1,7 @@
 import flask
 import traceback
 
-from flask import Flask 
+from flask import Flask, render_template 
 from flask_cors import CORS
 
 from auth.routes import auth_bp
@@ -12,7 +12,7 @@ def create_app():
     db.create_tables([Profile, AuthToken, Game, GameProfile, Coin, GameCoin,
         Ticker, Trade, GameProfileCoin])
     # FIXME get rid of this when you have db migrations
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder="./build")
     CORS(app)
 
     @app.before_request
@@ -31,6 +31,7 @@ def create_app():
 
     @app.route('/')
     def hello():
-        return 'hello world'
+        return flask.render_template("index.html")
+        # return 'hello world'
 
     return app
