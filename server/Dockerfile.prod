@@ -1,16 +1,6 @@
-from node:alpine as front
-workdir /frontend
-copy ./client-react/package.json ./
-run npm i --verbose
-copy ./client-react . 
-cmd ["npm", "run", "build"]
-
-
-from python:buster as back
-workdir /backend
-copy ./server/requirements.txt ./
+from python:buster
+workdir /app
+copy requirements.txt ./
 run pip install -r requirements.txt
-copy ./server .
-run mkdir build
-copy --from=front /frontend/build ./build
+copy . .
 cmd ["gunicorn", "--bind", "0.0.0.0:5000", "wsgi:create_app()"]
