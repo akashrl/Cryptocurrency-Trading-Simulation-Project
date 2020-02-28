@@ -1,6 +1,8 @@
 version: '3'
 services:
   proxy:
+   depends_on:
+     - client
    build:
      dockerfile: Dockerfile.prod
      context: ./proxy
