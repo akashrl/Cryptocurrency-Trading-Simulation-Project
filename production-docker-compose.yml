@@ -38,4 +38,5 @@ services:
       - FLASK_ENV=development
       #TODO Change to real variables/create secrets file.
       # NOTE do this
-      - PYTHONPATH=
+      - PYTHONPATH=/app
+      - HTTP_HOST=http://localhost:5000
