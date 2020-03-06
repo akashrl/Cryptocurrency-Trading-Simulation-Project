@@ -6,5 +6,6 @@ from main import create_app
 # Sill need to research this
 if __name__ == '__main__':
     # TODO do this before deploying to production
-    raise NotImplementedError("In development, just do `python run.py`")
+    create_app().run()
+    # raise NotImplementedError("In development, just do `python run.py`")
 

@@ -1,0 +1,41 @@
+version: '3'
+services:
+  proxy:
+   depends_on:
+     - client
+   build:
+     dockerfile: Dockerfile.prod
+     context: ./proxy
+   ports:
+     - "80:80"
+  client:
+    ports:
+      - "3000:3000"
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client-react/
+    volumes:
+      - ./client-react:/app
+      - /app/node_modules
+  api:
+    # TODO add migrations after 'done;' below:
+    # command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 1; done; python run-dev.py'
+    #command: gunicorn --bind 0.0.0.0:5000 wsgi:create_app()
+
+    build:
+      dockerfile: Dockerfile.prod
+      context: ./server/
+    volumes:
+      - ./server:/app
+    ports:
+      - "5000:5000"
+    tty: true
+    stdin_open: true
+    env_file:
+      - ./.env
+    environment:
+      - PORT=5000
+      - FLASK_ENV=development
+      #TODO Change to real variables/create secrets file.
+      # NOTE do this
+      - PYTHONPATH=
