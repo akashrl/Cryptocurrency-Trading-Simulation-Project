@@ -9,7 +9,7 @@ export const getAllCoins = () => {
     // replace this with an api module assumedly
     // const res = await axios.post('/api/login', {email, password})
     // just an example
-    const res = await axios.get('http://localhost:5000/game/coins')
+    const res = await axios.get('/api/game/coins')
     dispatch({type: Type.SET_COINS, payload: res.data})
   }
 }

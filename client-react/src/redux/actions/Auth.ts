@@ -35,7 +35,7 @@ export const login = (username: string, password: string) => {
     try {
       // TODO please don't hard-code this, we're working on getting nginx with
       // docker
-      res = await axios.post('http://localhost:5000/auth/login', {username, password})
+      res = await axios.post('/api/auth/login', {username, password})
       persistToken(res.data.token)
       dispatch({type: Type.LOGIN_SUCCEEDED, payload: true})
       const pushAction: any = push('/')
@@ -61,7 +61,7 @@ export const register = (username: string, password: string) => {
     dispatch({type: Type.REGISTER})
     let res: AuthTokenResponse
     try {
-      res = await axios.post('http://localhost:5000/auth/register', {username, password})
+      res = await axios.post('/api/auth/register', {username, password})
       persistToken(res.data.token)
       dispatch({type: Type.REGISTER_SUCCEEDED, payload: true})
       const pushAction: any = push('/')
