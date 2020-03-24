@@ -27,7 +27,8 @@ class MenuBar extends React.Component<MenuBarProps, MenuBarState> {
 
     componentDidMount() {
       this.props.fetchAuthToken()
-      const socket = io('http://localhost:5000').connect();
+      const host: any = process.env.REACT_APP_SOCKET_HOST
+      const socket = io(host).connect();
       socket.on('message', function(data: any){
         console.log('event received:', data)
         // TODO dispatch

@@ -21,6 +21,8 @@ services:
     volumes:
       - ./client-react:/app
       - /app/node_modules
+    environment:
+      - REACT_APP_SOCKET_HOST=http://localhost:5000
   api:
     depends_on:
       - postgres
