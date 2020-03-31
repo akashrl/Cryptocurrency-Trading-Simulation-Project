@@ -1,6 +1,8 @@
-from python:buster
+from python:3.6.10-buster
 workdir /app
 copy requirements.txt ./
 run pip install -r requirements.txt
 copy . .
-cmd ["gunicorn", "--bind", "0.0.0.0:5000", "wsgi:create_app()"]
+cmd ["python", "migrations/migrate.py", "down", "v1"]
+cmd ["python", "migrations/migrate.py", "up", "v1"]
+cmd ["gunicorn", "--bind", "0.0.0.0:5000", "wsgi:create_app()", "-t", "900"]
