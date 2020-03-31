@@ -25,7 +25,7 @@ export const createGame = (
 ) => {
   return async (dispatch: Dispatch<Action>) => {
     try {
-      const res = await axios.post('http://localhost:5000/game/', {activeCoins, endsOn, startingCash, title});
+      const res = await axios.post('/api/game/', {activeCoins, endsOn, startingCash, title});
       const action: any = push(`/game/${res.data.id}`)
       dispatch(action)
     } catch (e) {

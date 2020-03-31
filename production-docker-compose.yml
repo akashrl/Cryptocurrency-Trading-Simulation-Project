@@ -17,6 +17,9 @@ services:
     volumes:
       - ./client-react:/app
       - /app/node_modules
+    environment:
+      # TODO change this!!! Don't forget to expose the port if we can't get nginx to work with socket.io!
+      - REACT_APP_SOCKET_HOST=http://localhost:5000
   api:
     # TODO add migrations after 'done;' below:
     # command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 1; done; python run-dev.py'
