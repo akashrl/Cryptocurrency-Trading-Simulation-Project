@@ -34,7 +34,7 @@ class MenuBar extends React.Component<MenuBarProps, MenuBarState> {
       socket.on('message', function(data: any){
         console.log('event received:', data);
         this.setCurrentPrices(data);
-      });
+      }.bind(this));
     }
 
     private navigateTo = (navigateTo: string) => () => {
