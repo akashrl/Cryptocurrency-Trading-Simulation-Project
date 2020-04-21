@@ -72,7 +72,7 @@ class MenuBar extends React.Component<MenuBarProps, MenuBarState> {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                     <Nav>
-                        <Nav.Link onClick={this.navigateTo('/play')}>Play</Nav.Link>
+                        {this.props.loggedIn && <Nav.Link onClick={this.navigateTo('/play')}>My Games</Nav.Link>}
                         {this.renderLoginOrUsername()}
                     </Nav>
                 </Navbar.Collapse>
@@ -84,7 +84,6 @@ class MenuBar extends React.Component<MenuBarProps, MenuBarState> {
         if (this.props.loggedIn) {
             return (
                 <NavDropdown title={this.props.username} id="basic-nav-dropdown" alignRight>
-                    <NavDropdown.Item onClick={this.navigateTo('/play')} >Games</NavDropdown.Item>
                     <NavDropdown.Item
                         onClick={
                             this.navigateTo('/profile/' + this.props.profileId)
