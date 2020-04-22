@@ -47,7 +47,7 @@ export default (state = initialState, action: Action) => {
       var id = action.payload.id;
       var amount = action.payload.newAmount;
       var newCoins = state.game.coins.map((coin) => {
-        if (coin.id == id) {
+        if (coin.id === id) {
           coin.number = amount;
         }
         return coin;
@@ -140,6 +140,8 @@ export default (state = initialState, action: Action) => {
         setGameErrorMessage: '',
         createGameErrorMessage: '',
       }
+    case Type.LOGOUT:
+      return initialState
     default:
       return state
   }
