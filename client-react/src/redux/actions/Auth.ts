@@ -1,5 +1,5 @@
 import { Type } from './Types'
-import io from 'socket.io-client'
+import io from 'socket.io-client/dist/socket.io'
 import axios from 'axios'
 import { Dispatch } from 'redux'
 import { Action } from '../reducers/AuthReducer'
@@ -167,7 +167,9 @@ export const fetchAuthToken = () => {
 export const initializeSocketConnection = (authToken: string) => {
   return async (dispatch: Dispatch<Action>) => {
     console.log('initializing connection with token', authToken)
-    const socket = io(process.env.REACT_APP_SOCKET_HOST, {query: {token: authToken}}).connect();
+    const socket = io(process.env.REACT_APP_SOCKET_HOST, {query: {token: authToken}, forceNew: true, transports: ['websocket']}).connect();
+    socket.on('connect', (data: any) => console.log(data));
+    socket.on('disconnect', (data: any) => console.log(data));
     socket.on('message', (data: any) => {
       console.log('event received:', data)
       //this.setCurrentPrices(data);

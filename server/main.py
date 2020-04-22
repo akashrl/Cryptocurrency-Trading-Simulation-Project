@@ -52,7 +52,7 @@ def create_app():
     def hello():
         return 'hello world'
 
-    socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins='*')
+    socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins='*', ping_timeout=60000, ping_interval=60000, monitor_clients=False)
     #socketio = SocketIO(app, async_mode='threading', cors_allowed_origins='*')
 
     @socketio.on('connect')
