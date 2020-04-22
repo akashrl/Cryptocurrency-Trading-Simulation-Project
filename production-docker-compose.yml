@@ -23,7 +23,7 @@ services:
     environment:
       # TODO change this!!! Don't forget to expose the port if we can't get nginx to work with socket.io!
       #- REACT_APP_SOCKET_HOST=http://fortune-game.duckdns.org:5000
-      - REACT_APP_SOCKET_HOST=http://localhost:5000
+      - REACT_APP_SOCKET_HOST=http://staging.tylerstanish.com:5000
       - CI=true
   api:
     # TODO add migrations after 'done;' below:
@@ -50,7 +50,7 @@ services:
       # NOTE do this
       - PYTHONPATH=/app
       #- HTTP_HOST=http://fortune-game.duckdns.org:5000
-      - HTTP_HOST=http://localhost:5000
+      - HTTP_HOST=http://staging.tylerstanish.com:5000
       - NOMICS_API_KEY=c985caec9e0f781316d029710ef15ae2
   postgres:
     image: 'postgres'
