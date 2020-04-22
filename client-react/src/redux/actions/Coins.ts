@@ -55,10 +55,6 @@ export const getAllCoinsForGame = (
   pageNum: number = 1,
   numPerPage: number = 25) => {
   return async (dispatch: Dispatch<Action>) => {
-<<<<<<< HEAD
-	  const res = await axios.get('/api/tickers/1d')
-    dispatch({type: Type.SET_ONEDAY_TICKERS, payload: res.data})
-=======
       try {
           await fetchAuthToken()  // TODO: Remove this if no authentication is required for this API. Eg, if non
           // logged-in players can still view the global game
@@ -71,7 +67,6 @@ export const getAllCoinsForGame = (
     } catch (e) {
           handleAxiosError(e, dispatch, Type.SET_COINS)   // TODO: Use the correct type
       }
->>>>>>> develop
   }
 };
 
