@@ -9,6 +9,8 @@ services:
    ports:
      - "80:80"
   client:
+    depends_on:
+      - api
     ports:
       - "3000:3000"
     build:
@@ -17,11 +19,15 @@ services:
     volumes:
       - ./client-react:/app
       - /app/node_modules
+    environment:
+      # TODO change this!!! Don't forget to expose the port if we can't get nginx to work with socket.io!
+      - REACT_APP_SOCKET_HOST=http://fortune-game.duckdns.org:5000
+      - CI=true
   api:
     # TODO add migrations after 'done;' below:
     # command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 1; done; python run-dev.py'
+    command: bash -c 'python migrations/migrate.py down v1;python migrations/migrate.py up v1; python run-dev.py' 
     #command: gunicorn --bind 0.0.0.0:5000 wsgi:create_app()
-
     build:
       dockerfile: Dockerfile.prod
       context: ./server/
@@ -39,4 +45,5 @@ services:
       #TODO Change to real variables/create secrets file.
       # NOTE do this
       - PYTHONPATH=/app
-      - HTTP_HOST=http://localhost:5000
+      - HTTP_HOST=http://fortune-game.duckdns.org:5000
+      - NOMICS_API_KEY=c985caec9e0f781316d029710ef15ae2

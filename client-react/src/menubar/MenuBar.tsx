@@ -1,41 +1,59 @@
 import * as React from 'react';
+import io from 'socket.io-client'
 import logo from '../logo.svg';
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import {connect} from 'react-redux'
 import Actions from '../redux/actions'
 import { RootState } from '../redux/reducers';
 import { Redirect } from 'react-router-dom';
+import { currentPricesType } from '../redux/reducers/CoinReducer'
 
 interface MenuBarProps {
     loggedIn: boolean;
     logout: () => void;
     fetchAuthToken: () => void;
+    setCurrentPrices: (payload: currentPricesType) => void;
 }
 
 interface MenuBarState {
-    toLogin: boolean;
+    navigateTo?: string;
 }
 
 class MenuBar extends React.Component<MenuBarProps, MenuBarState> {
     constructor(props: MenuBarProps) {
         super(props);
         this.state = {
-            toLogin: false,
+            navigateTo: undefined
         }
     }
 
     componentDidMount() {
       this.props.fetchAuthToken()
+      const host: any = process.env.REACT_APP_SOCKET_HOST
+      const socket = io(host).connect();
+      socket.on('message', function(data: any){
+        console.log('event received:', data);
+        this.setCurrentPrices(data);
+      }.bind(this));
     }
 
-    private navigateToLogin = () => {
-        this.setState({ toLogin: true });
+    private navigateTo = (navigateTo: string) => () => {
+        this.setState({ navigateTo })
+    }
+
+    private logout = () => {
+        this.props.logout();
+        this.navigateTo('/')();
+    }
+
+    private setCurrentPrices = (payload: currentPricesType) => {
+        this.props.setCurrentPrices(payload);
     }
 
     render() {
-        if (this.state.toLogin === true) {
-            this.setState({ toLogin: false });
-            return <Redirect to='/login' />
+        if (this.state.navigateTo) {
+            this.setState({ navigateTo: undefined })
+            return <Redirect to={this.state.navigateTo} />
         }
         
         return (
@@ -53,7 +71,7 @@ class MenuBar extends React.Component<MenuBarProps, MenuBarState> {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                     <Nav>
-                        <Nav.Link href="play">Play</Nav.Link>
+                        <Nav.Link onClick={this.navigateTo('/play')}>Play</Nav.Link>
                         {this.renderLoginOrUsername()}
                     </Nav>
                 </Navbar.Collapse>
@@ -65,14 +83,14 @@ class MenuBar extends React.Component<MenuBarProps, MenuBarState> {
         if (this.props.loggedIn) {
             return (
                 <NavDropdown title="Username" id="basic-nav-dropdown" alignRight>
-                    <NavDropdown.Item href="play">Games</NavDropdown.Item>
+                    <NavDropdown.Item onClick={this.navigateTo('/play')} >Games</NavDropdown.Item>
                     <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={this.props.logout}>Logout</NavDropdown.Item>
+                    <NavDropdown.Item onClick={this.logout}>Logout</NavDropdown.Item>
                 </NavDropdown>
             )
         } else {
             return (
-                <Nav.Link onClick={this.navigateToLogin}>Sign In</Nav.Link>
+                <Nav.Link onClick={this.navigateTo('/login')}>Sign In</Nav.Link>
             )
         }
     }
@@ -84,5 +102,6 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = {
   logout: Actions.auth.logout,
   fetchAuthToken: Actions.auth.fetchAuthToken,
+  setCurrentPrices: Actions.coins.setCurrentPrices,
 }
 export default connect(mapStateToProps, mapDispatchToProps)(MenuBar)
