@@ -29,7 +29,7 @@ export type CoinsAndPrices = Array<CoinAndPrices>;
 
 export const getAllCoins = () => {
   return async (dispatch: Dispatch<Action>) => {
-    const res = await axios.get('http://localhost:5000/game/coins')
+    const res = await axios.get('/api/game/coins')
     dispatch({type: Type.SET_SIMPLE_COINS, payload: res.data})
   }
 }
@@ -59,7 +59,7 @@ export const getAllCoinsForGame = (
           await fetchAuthToken()  // TODO: Remove this if no authentication is required for this API. Eg, if non
           // logged-in players can still view the global game
           const res = await axios.get(
-              'http://localhost:5000/game/' + gameId + '/coins',
+              '/api/game/' + gameId + '/coins',
               { params: { timeSpan, sortBy, numPerPage, pageNum } }
           );
           dispatch({type: Type.SET_COINS, payload: res.data});  // TODO: Is this the correct type?

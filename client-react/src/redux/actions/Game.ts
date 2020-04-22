@@ -79,7 +79,7 @@ export const getGame = (
   return async (dispatch: Dispatch<Action>) => {
     try {
       await fetchAuthToken();
-      const res = await axios.get(`http://localhost:5000/game/${id}`);
+      const res = await axios.get(`/api/game/${id}`);
       dispatch({type: Type.SET_GAME, payload: res.data.game});
       dispatch({type: Type.SET_GAME_PROFILE, payload: res.data.gameProfile});
     } catch (e) {
