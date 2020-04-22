@@ -1,33 +1,21 @@
 version: '3'
 services:
   proxy:
-   depends_on:
-     - client
-     - postgres
-   build:
-     dockerfile: Dockerfile.prod
-     context: ./proxy
-   ports:
-     - "80:80"
-  client:
+    image: nginx:1.15-alpine
     depends_on:
-      - api
-    ports:
-      - "3000:3000"
+      - postgres
     build:
-      dockerfile: Dockerfile.dev
-      context: ./client-react/
-    volumes:
-      - ./client-react:/app
-      - /app/node_modules
+      dockerfile: Dockerfile.prod
+      context: ./proxy
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    ports:
+      - "8000:80"
     environment:
-      # TODO change this!!! Don't forget to expose the port if we can't get nginx to work with socket.io!
-      #- REACT_APP_SOCKET_HOST=http://fortune-game.duckdns.org:5000
-      - REACT_APP_SOCKET_HOST=http://staging.tylerstanish.com:5000
-      - CI=true
+      - REACT_APP_SOCKET_HOST=http://localhost:5000
+    volumes:
+      - ./proxy/nginx-prod.conf:/etc/nginx/conf.d/default.conf
+      - ./client-react/build:/var/www/build
   api:
-    # TODO add migrations after 'done;' below:
-    # command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 1; done; python run-dev.py'
     command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 1; done; python migrations/migrate.py up v1; python run-dev.py'
     #command: gunicorn --bind 0.0.0.0:5000 wsgi:create_app()
     depends_on:

@@ -1,5 +1,5 @@
 from nginx
 
-run rm -f /etc/nginx/conf.d/*
+#run rm -f /etc/nginx/conf.d/*
 
-copy nginx-prod.conf /etc/nginx/conf.d/app.conf
+#copy nginx-prod.conf /etc/nginx/conf.d/app.conf
