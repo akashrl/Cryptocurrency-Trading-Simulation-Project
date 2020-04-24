@@ -99,6 +99,9 @@ export const register = (username: string, password: string) => {
       store().auth.socket.disconnect()
     } catch(e) {}
     const acn: any = initializeSocketConnection(tok);
+    toast('Welcome to Fortune!')
+    toast('Click the Play button in the menubar on top to create a new game.')
+    toast('To adjust account options, see achiements, and add friends, click on your username on the top and select Profile')
     dispatch(acn)
   }
 };
