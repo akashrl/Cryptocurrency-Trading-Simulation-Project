@@ -31,7 +31,7 @@ export const getNotifications = (page: number) => {
     return async (dispatch: Dispatch<Action>) => {
         let res: GetNotificationsResponse
         try {
-            res = await axios.get(`http://localhost:5000/notification?page=${page}`)
+            res = await axios.get(`/api/notification?page=${page}`)
         } catch (e) {
             handleAxiosError(e, dispatch, Type.GET_NOTIFICATIONS_FAILED);
             return
@@ -44,7 +44,7 @@ export const getPriceAlerts = () => {
     return async (dispatch: Dispatch<Action>) => {
         let res: GetPriceAlertsResponse
         try {
-            res = await axios.get('http://localhost:5000/alert')
+            res = await axios.get('/api/alert')
         } catch (e) {
             handleAxiosError(e, dispatch, Type.GET_PRICE_ALERTS_FAILED);
             return
@@ -64,7 +64,7 @@ export const createPriceAlert = (coinId: string, strikePrice: string, type: Pric
             stringType = 'below'
         }
         try {
-            res = await axios.post('http://localhost:5000/alert', {coinId, strikePrice, type: stringType})
+            res = await axios.post('/api/alert', {coinId, strikePrice, type: stringType})
         } catch (e) {
             handleAxiosError(e, dispatch, Type.CREATE_PRICE_ALERT_FAILED);
             return

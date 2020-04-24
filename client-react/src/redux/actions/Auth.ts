@@ -1,5 +1,5 @@
 import { Type } from './Types'
-import io from 'socket.io-client'
+import io from 'socket.io-client/dist/socket.io'
 import axios from 'axios'
 import { Dispatch } from 'redux'
 import { Action } from '../reducers/AuthReducer'
@@ -38,7 +38,7 @@ async function fetchToken() {
 export const login = (username: string, password: string) => {
   return async (dispatch: Dispatch<Action>, store: () => RootState) => {
     // replace this with an api module assumedly
-    // const res = await axios.post('/api/login', {email, password})
+    // const res = await axios.post('//api/login', {email, password})
     // just an example
     dispatch({type: Type.LOGIN})
     let res: AuthTokenResponse
@@ -46,7 +46,7 @@ export const login = (username: string, password: string) => {
     try {
       // TODO please don't hard-code this, we're working on getting nginx with
       // docker
-      res = await axios.post('http://localhost:5000/auth/login', {username, password})
+      res = await axios.post('/api/auth/login', {username, password})
       persistToken(res.data.token)
       dispatch(verifyToken() as any);
       tok = res.data.token
@@ -83,7 +83,7 @@ export const register = (username: string, password: string) => {
     let res: AuthTokenResponse
     let tok: string = ''
     try {
-      res = await axios.post('http://localhost:5000/auth/register', {username, password})
+      res = await axios.post('/api/auth/register', {username, password})
       persistToken(res.data.token)
       dispatch(verifyToken() as any);
       tok = res.data.token
@@ -110,7 +110,7 @@ export const changeUsername = (username: string) => {
     }
     let res: ChangeUsernameResponse;
     try {
-      res = await axios.put('http://localhost:5000/auth/username', { username });
+      res = await axios.put('/api/auth/username', { username });
       dispatch({type: Type.CHANGE_USERNAME_SUCCEEDED, payload: res.data});
     }
     catch (e) {
@@ -126,7 +126,7 @@ export const changePassword = (oldPassword: string, newPassword: string) => {
       return;
     }
     try {
-      await axios.put('http://localhost:5000/auth/password', { oldPassword, newPassword });
+      await axios.put('/api/auth/password', { oldPassword, newPassword });
       dispatch({type: Type.CHANGE_PASSWORD_SUCCEEDED });
     }
     catch (e) {
@@ -140,7 +140,7 @@ export const verifyToken = () => {
     try {
       await fetchAuthToken()
 
-      const res = await axios.post('http://localhost:5000/auth/verify');
+      const res = await axios.post('/api/auth/verify');
       
       if (!res.data.username) {
         dispatch(logout() as any);
@@ -167,7 +167,9 @@ export const fetchAuthToken = () => {
 export const initializeSocketConnection = (authToken: string) => {
   return async (dispatch: Dispatch<Action>) => {
     console.log('initializing connection with token', authToken)
-    const socket = io('http://localhost:5000', {query: {token: authToken}}).connect();
+    const socket = io(process.env.REACT_APP_SOCKET_HOST, {query: {token: authToken}, forceNew: true, transports: ['websocket']}).connect();
+    socket.on('connect', (data: any) => console.log(data));
+    socket.on('disconnect', (data: any) => console.log(data));
     socket.on('message', (data: any) => {
       console.log('event received:', data)
       //this.setCurrentPrices(data);

@@ -24,6 +24,7 @@ from db import * # FIXME get rid of * when you have db migrations
 from notifications.services import register_socketio
 from scripts.service import begin
 
+
 def create_app():
     app = Flask(__name__)
     app.url_map.strict_slashes = False
@@ -56,7 +57,7 @@ def create_app():
     def hello():
         return 'hello world'
 
-    socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins='*')
+    socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins='*', ping_timeout=60000, ping_interval=60000, monitor_clients=False)
     #socketio = SocketIO(app, async_mode='threading', cors_allowed_origins='*')
 
     @socketio.on('connect')

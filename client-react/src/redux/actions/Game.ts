@@ -62,8 +62,8 @@ export const createGame = (
 ) => {
   return async (dispatch: Dispatch<Action>) => {
     try {
+    const res: CreateGameResponse = await axios.post('/api/game/', {activeCoins, endsOn, startingCash, title});
       await fetchAuthToken();
-      const res: CreateGameResponse = await axios.post('http://localhost:5000/game/', {activeCoins, endsOn, startingCash, title});
       const action: any = push(`/game/${res.data.id}`);
       dispatch(action);
     } catch (e) {
@@ -93,7 +93,8 @@ export const liquefy = (gameId: string) => {
     dispatch({type: Type.SET_LOADING});
     try {
       await fetchAuthToken();
-      const res = await axios.delete(`http://localhost:5000/game/${gameId}/coins`);
+      //const res = await axios.delete(`http://localhost:5000/game/${gameId}/coins`);
+      const res = await axios.get(`/api/game/liquify`);
 
       // I'm thinking this method's response will contain a player's new gameProfile and gameCoins after liquifying
       dispatch({type: Type.SET_CASH, payload: res.data});
@@ -114,7 +115,7 @@ export const transaction = (
   return async (dispatch: Dispatch<Action>) => {
     try {
       await fetchAuthToken();
-      const res = await axios.post(`http://localhost:5000/game/${gameId}/coin`, {coinId: id, coinAmount: amount});
+      const res = await axios.post(`/api/game/${gameId}/coin`, {coinId: id, coinAmount: amount});
 
       dispatch({type: Type.SET_COIN_AMOUNT, payload: { id: id, newAmount: res.data.new_amount }})
       dispatch({type: Type.SET_CASH, payload: { cash: res.data.new_cash }})

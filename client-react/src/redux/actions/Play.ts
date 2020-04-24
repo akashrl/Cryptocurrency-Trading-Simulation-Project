@@ -29,7 +29,7 @@ export const activeGamesAtPage = (
     return async (dispatch: Dispatch<Action>) => {
         try {
             await fetchAuthToken();
-            const res = await axios.get('http://localhost:5000/play',
+	    const res = await axios.get('/api/play',
                 {params: {page: pageNumber, keyword: keyword, criteria: sortCriteria}});
             dispatch({type: Type.GET_ACTIVE_GAMES, payload: res.data})
         } catch (e) {
@@ -43,7 +43,7 @@ export const joinGame = (
     return async (dispatch: Dispatch<Action>) => {
         try {
             await fetchAuthToken();
-            const res = await axios.get('http://localhost:5000/join',
+	    const res = await axios.get('/api/join',
                 {params: {code: code}});
             console.log("Join Response", res.data)
             dispatch({type: Type.JOIN_GAME, payload: res.data})
