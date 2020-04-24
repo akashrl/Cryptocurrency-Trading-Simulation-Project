@@ -38,7 +38,7 @@ async function fetchToken() {
 export const login = (username: string, password: string) => {
   return async (dispatch: Dispatch<Action>, store: () => RootState) => {
     // replace this with an api module assumedly
-    // const res = await axios.post('//api/login', {email, password})
+    // const res = await axios.post('/api/auth/login', {email, password})
     // just an example
     dispatch({type: Type.LOGIN});
     let res: AuthTokenResponse;
@@ -46,7 +46,7 @@ export const login = (username: string, password: string) => {
     try {
       // TODO please don't hard-code this, we're working on getting nginx with
       // docker
-      res = await axios.post('/auth/login', {username, password});
+      res = await axios.post('/api/auth/login', {username, password});
       persistToken(res.data.token);
       dispatch(verifyToken() as any);
       tok = res.data.token;
@@ -84,7 +84,7 @@ export const register = (username: string, password: string) => {
     let res: AuthTokenResponse;
     let tok: string = '';
     try {
-      res = await axios.post('/auth/register', {username, password});
+      res = await axios.post('/api/auth/register', {username, password});
       persistToken(res.data.token);
       dispatch(verifyToken() as any);
       tok = res.data.token;
@@ -192,7 +192,7 @@ export const checkIfAdmin = () => {
   return async (dispatch: Dispatch<Action>) => {
     try {
       await fetchAuthToken();
-      const res = await axios.get('/auth/admin');
+      const res = await axios.get('/api/auth/admin');
       dispatch({type: Type.GET_IS_ADMIN, payload: res.data.isAdmin});
     }
     catch (e) {

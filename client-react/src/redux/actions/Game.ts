@@ -63,7 +63,7 @@ export const createGame = (
   return async (dispatch: Dispatch<Action>) => {
     try {
       await fetchAuthToken();
-      const res: CreateGameResponse = await axios.post('/game/',
+      const res: CreateGameResponse = await axios.post('/api/game/',
           {activeCoins, endsOn, startingCash, title});
       const action: any = push(`/game/${res.data.id}`);
       dispatch(action);
@@ -80,7 +80,7 @@ export const getGame = (
   return async (dispatch: Dispatch<Action>) => {
     try {
       await fetchAuthToken();
-      const res = await axios.get(`/game/${id}`);
+      const res = await axios.get(`/api/game/${id}`);
       dispatch({type: Type.SET_GAME, payload: res.data.game});
       dispatch({type: Type.SET_GAME_PROFILE, payload: res.data.gameProfile});
     } catch (e) {
@@ -94,7 +94,7 @@ export const liquefy = (gameId: string) => {
     dispatch({type: Type.SET_LOADING});
     try {
       await fetchAuthToken();
-      //const res = await axios.delete(`/game/${gameId}/coins`);
+      //const res = await axios.delete(`/api/game/${gameId}/coins`);
       const res = await axios.get(`/api/game/liquify`);
 
       // I'm thinking this method's response will contain a player's new gameProfile and gameCoins after liquifying
@@ -143,7 +143,7 @@ export const getMessagesData = (
   return async (dispatch: Dispatch<Action>) => {
     try {
       await fetchAuthToken();
-      const res = await axios.get(`/game/${gameID}/chat`,
+      const res = await axios.get(`/api/game/${gameID}/chat`,
           {params: {oldestID: oldestID, newestID: newestID, getNewMessages: getNewMessages}});
       console.log("Get Messages API: ", res.data)
       dispatch({type: Type.GET_MESSAGES_DATA, payload: res.data})
@@ -160,7 +160,7 @@ export const createMessage= (
   return async (dispatch: Dispatch<Action>) => {
     try {
       await fetchAuthToken();
-      const res = await axios.post(`/game/${gameID}/chat`,
+      const res = await axios.post(`/api/game/${gameID}/chat`,
           {message: message});
       console.log("Create Message API: ", res.data)
       dispatch({type: Type.CREATE_MESSAGE, payload: res.data})
@@ -176,7 +176,7 @@ export const getPlayersData = (
   return async (dispatch: Dispatch<Action>) => {
     try {
       await fetchAuthToken();
-      const res = await axios.get(`/game/${gameID}/chat/players`);
+      const res = await axios.get(`/api/game/${gameID}/chat/players`);
       dispatch({type: Type.GET_PLAYERS_DATA, payload: res.data})
     } catch (e) {
       handleAxiosError(e, dispatch, Type.GET_PLAYERS_DATA_FAILED)

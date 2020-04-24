@@ -1,3 +1,3 @@
 You need to replace http://localhost:5000 with relative urls
 Websocket connection should use the environment variable, *which must be
-set when `npm run build`ing!*
+set when `npm run build`ing!* (REACT_APP_SOCKET_HOST)
