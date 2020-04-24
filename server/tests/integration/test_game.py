@@ -33,6 +33,21 @@ class GameTest(AuthDbTest):
                 shareable_code='aaaa',
                 ends_at=(datetime.utcnow().replace(tzinfo=pytz.utc) + timedelta(days=7)).isoformat()
             )
+            self.game1 = Game.create(
+                name='Game1',
+                starting_cash=10000.00,
+                shareable_link='baaaabbbbccccdddd',
+                shareable_code='xaaaa',
+                ends_at=(datetime.utcnow().replace(tzinfo=pytz.utc) + timedelta(days=9)).isoformat()
+            )
+
+            self.game2 = Game.create(
+                name='Game2',
+                starting_cash=10000.00,
+                shareable_link='xzbaaaabbbbccccdddd',
+                shareable_code='bxaaaa',
+                ends_at=(datetime.utcnow().replace(tzinfo=pytz.utc) + timedelta(days=8)).isoformat()
+            )
             profile = Profile.create(username='theusername', hashed_password='thepassword')
             self.token = AuthToken.create(profile=profile, token='thevalidtoken').token
 
@@ -369,3 +384,81 @@ class GameTest(AuthDbTest):
         self.client.get(f'/join?code={game.shareable_code}')
         after = GameProfile.select().count()
         self.assertEqual(before, after)
+
+    def test_join_game(self):
+        game = Game.create(
+            name='GameX',
+            starting_cash=10000.00,
+            shareable_link='baaaabbbbccccdddd',
+            shareable_code='xaaaa',
+            ends_at=(datetime.utcnow().replace(tzinfo=pytz.utc) + timedelta(days=7)).isoformat()
+        )
+        before = GameProfile.select().count()
+        self.client.get(f'/join?code={game.shareable_code}')
+        after = GameProfile.select().count()
+        self.assertNotEqual(before, after)
+
+    def active_games_filtered_by_keyword(self):
+        res = self.client.get(
+            '/play?page=1&keyword=Game1&criteria=%7B%22titleAscending%22:false,%22titleDescending%22:false,%22endTimeAscending%22:false,%22endTimeDescending%22:false%7D',
+            headers={
+                'Authorization': 'Bearer ' + self.token
+            }
+        )
+        self.assertEqual(1, len(res.json['games']))
+
+    def active_games_at_page(self):
+        res = self.client.get(
+            '/play?page=1&keyword=&criteria=%7B%22titleAscending%22:false,%22titleDescending%22:false,%22endTimeAscending%22:false,%22endTimeDescending%22:false%7D',
+            headers={
+                'Authorization': 'Bearer ' + self.token
+            }
+        )
+        from play.services import PAGE_SIZE
+        self.assertLessEqual(len(res.json['games']), PAGE_SIZE)
+
+    def active_games_at_page(self):
+        res = self.client.get(
+            '/play?page=1&keyword=&criteria=%7B%22titleAscending%22:false,%22titleDescending%22:false,%22endTimeAscending%22:false,%22endTimeDescending%22:false%7D',
+            headers={
+                'Authorization': 'Bearer ' + self.token
+            }
+        )
+        from play.services import PAGE_SIZE
+        self.assertLessEqual(len(res.json['games']), PAGE_SIZE)
+
+    def active_games_sort_by_date(self):
+        res1 = self.client.get(
+            '/play?page=1&keyword=&criteria=%7B%22titleAscending%22:false,%22titleDescending%22:false,%22endTimeAscending%22:true,%22endTimeDescending%22:false%7D',
+            headers={
+                'Authorization': 'Bearer ' + self.token
+            }
+        )
+
+        res2 = self.client.get(
+            '/play?page=1&keyword=&criteria=%7B%22titleAscending%22:false,%22titleDescending%22:false,%22endTimeAscending%22:false,%22endTimeDescending%22:true%7D',
+            headers={
+                'Authorization': 'Bearer ' + self.token
+            }
+        )
+
+        self.assertNotEqual(res1.json['games'], res2.json['games'])
+
+    def active_games_sort_by_date(self):
+        res1 = self.client.get(
+            '/play?page=1&keyword=&criteria=%7B%22titleAscending%22:true,%22titleDescending%22:false,%22endTimeAscending%22:false,%22endTimeDescending%22:false%7D',
+            headers={
+                'Authorization': 'Bearer ' + self.token
+            }
+        )
+
+        res2 = self.client.get(
+            '/play?page=1&keyword=&criteria=%7B%22titleAscending%22:false,%22titleDescending%22:true,%22endTimeAscending%22:false,%22endTimeDescending%22:false%7D',
+            headers={
+                'Authorization': 'Bearer ' + self.token
+            }
+        )
+
+        self.assertNotEqual(res1.json['games'], res2.json['games'])
+
+

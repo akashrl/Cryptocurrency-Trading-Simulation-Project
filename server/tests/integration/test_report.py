@@ -5,7 +5,7 @@ import json
 import pytz
 from functools import wraps
 
-from db import db, AuthToken, Profile, Coin, Game, GameProfile, GameCoin, Ticker, GameProfileCoin, Message
+from db import db, AuthToken, Profile, Coin, Game, GameProfile, GameCoin, Ticker, GameProfileCoin, Message, Report
 from tests.utils import DbTest, AuthDbTest
 
 
@@ -23,7 +23,7 @@ def mock_require_authentication():
     return MagicMock(side_effect=side_effect)
 
 
-class ChatTest(AuthDbTest):
+class ReportTest(AuthDbTest):
 
     def setUp(self):
         super().setUp()
@@ -35,33 +35,21 @@ class ChatTest(AuthDbTest):
                 shareable_code='aaaa',
                 ends_at=(datetime.utcnow().replace(tzinfo=pytz.utc) + timedelta(days=7)).isoformat()
             )
-            profile = Profile.create(username='username', hashed_password='password')
+            self.profile = Profile.create(username='username', hashed_password='password')
+            self.profile2 = Profile.create(username='username2', hashed_password='password2')
             GameProfile.create(game=self.game, profile=profile, cash=-1.0)
-            Message.create(
+            self.message = Message.create(
                 game=self.game.id,
-                profile=profile.id,
+                profile=self.profile2.id,
                 content="first message",
-                # use default value for created_on
             )
-            self.token = AuthToken.create(profile=profile, token='thevalidtoken').token
+            self.token = AuthToken.create(profile=self.profile, token='thevalidtoken').token
 
     # @patch('game.routes.require_authentication', mock_require_authentication())
-    def test_get_messages_success(self):
-        res = self.client.get('/game/{}/chat?oldestID=-1&newestID=-1&getNewMessages=true'.format(self.game.id),
-                              headers={
-                                  'Authorization': 'Bearer ' + self.token,
-                              },
-                              content_type='application/json',
-                              )
-        self.assertEqual(int(HTTPStatus.OK), res._status_code)
-        self.assertNotEqual(0, len(res.json['messages']))
-
-    # @patch('game.routes.require_authentication', mock_require_authentication())
-    def test_send_message_success(self):
-        prev_count = Message.select().count()
-        res = self.client.post('/game/{}/chat'.format(self.game.id),
+    def test_create_report_success(self):
+        res = self.client.post('/reports',
                                data=json.dumps({
-                                    'message': "random message"
+                                   'messageID': self.message.id
                                }),
                                headers={
                                    'Authorization': 'Bearer ' + self.token,
@@ -69,30 +57,47 @@ class ChatTest(AuthDbTest):
                                content_type='application/json',
                                )
         self.assertEqual(int(HTTPStatus.OK), res._status_code)
-        new_count = Message.select().count()
-        self.assertNotEqual(prev_count, new_count)
+        report = Report.get_or_none(Report.message == self.message.id)
+        assert report is not None
 
     # @patch('game.routes.require_authentication', mock_require_authentication())
-    def test_send_message_fail(self):
-        res = self.client.post('/game/{}/chat'.format(self.game.id),
-                               data=json.dumps({
-                                   'message': ""
-                               }),
-                               headers={
-                                   'Authorization': 'Bearer ' + self.token,
-                               },
-                               content_type='application/json',
-                               )
-        self.assertEqual(int(HTTPStatus.BAD_REQUEST), res._status_code)
-
-    # @patch('game.routes.require_authentication', mock_require_authentication())
-    def test_get_players_data_success(self):
-        res = self.client.get('/game/{}/chat/players'.format(self.game.id),
+    def test_get_reports_success(self):
+        Report.create(
+            game=self.game.id,
+            issuer=self.profile.id,
+            offender=self.profile2.id,
+            message=self.message.id,
+        )
+        res = self.client.get('/reports/?sortByStatusDescending=true&numPerPage=9&page=1',
                               headers={
                                   'Authorization': 'Bearer ' + self.token,
                               },
                               content_type='application/json',
                               )
+
         self.assertEqual(int(HTTPStatus.OK), res._status_code)
-        self.assertNotEqual(0, len(res.json['players']))
+        self.assertNotEqual(0, len(res.json['reports']))
+
+    # @patch('game.routes.require_authentication', mock_require_authentication())
+    def test_update_reports_success(self):
+        report = Report.create(
+            game=self.game.id,
+            issuer=self.profile.id,
+            offender=self.profile2.id,
+            message=self.message.id,
+        )
+        res = self.client.put('/reports/{}'.format(report.id),
+                              data=json.dumps({
+                                'userAction': "warning"
+                              }),
+                              headers={
+                                  'Authorization': 'Bearer ' + self.token,
+                              },
+                              content_type='application/json',
+                              )
+
+        self.assertEqual(int(HTTPStatus.OK), res._status_code)
+        updated = Report.get_or_none(Report.id == report.id)
+        self.assertIsNotNone(updated)
+        self.assertIsNotNone(updated.takenAction)
 

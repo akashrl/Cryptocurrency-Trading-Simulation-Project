@@ -5,6 +5,7 @@ import bcrypt
 from db import *
 from tests.utils import AuthDbTest
 
+
 class ProfileTests(AuthDbTest):
     def setUp(self):
         super().setUp()

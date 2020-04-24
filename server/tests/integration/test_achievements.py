@@ -19,7 +19,7 @@ def mock_require_authentication():
         return wrapper
     return MagicMock(side_effect=side_effect)
 
-class GameTest(AuthDbTest):
+class AchievementTest(AuthDbTest):
 
     def setUp(self):
         super().setUp()
