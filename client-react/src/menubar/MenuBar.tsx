@@ -20,6 +20,8 @@ interface MenuBarProps {
     setCurrentPrices: (payload: currentPricesType) => void;
     verifyToken: () => void;
     initializeSocketConnection: (authToken: string) => void;
+    isAdmin: boolean;
+    checkIfAdmin: () => void;
 }
 
 interface MenuBarState {
@@ -35,24 +37,25 @@ class MenuBar extends React.Component<MenuBarProps, MenuBarState> {
     }
 
     async componentDidMount() {
-      toast.configure()
-      await this.props.fetchAuthToken()
-      await this.props.verifyToken()
-      await this.props.initializeSocketConnection(this.props.authToken)
+      toast.configure();
+      await this.props.fetchAuthToken();
+      await this.props.verifyToken();
+      await this.props.initializeSocketConnection(this.props.authToken);
+      this.props.checkIfAdmin();
     }
 
     private navigateTo = (navigateTo: string) => () => {
         this.setState({ navigateTo })
-    }
+    };
 
     private logout = () => {
         this.props.logout();
         this.navigateTo('/')();
-    }
+    };
 
     render() {
         if (this.state.navigateTo) {
-            this.setState({ navigateTo: undefined })
+            this.setState({ navigateTo: undefined });
             return <Redirect to={this.state.navigateTo} />
         }
         
@@ -83,6 +86,10 @@ class MenuBar extends React.Component<MenuBarProps, MenuBarState> {
         if (this.props.loggedIn) {
             return (
                 <NavDropdown title={this.props.username} id="basic-nav-dropdown" alignRight>
+                    {this.props.isAdmin
+                    && <NavDropdown.Item
+                        onClick={this.navigateTo('/admin')}> Admin </NavDropdown.Item>
+                    }
                     <NavDropdown.Item onClick={this.navigateTo('/play')} >Games</NavDropdown.Item>
                     <NavDropdown.Item
                         onClick={
@@ -105,17 +112,21 @@ class MenuBar extends React.Component<MenuBarProps, MenuBarState> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  loggedIn: state.auth.loggedIn,
-  username: state.auth.username,
-  profileId: state.auth.profileId,
-  authToken: state.auth.authToken,
-})
+    loggedIn: state.auth.loggedIn,
+    username: state.auth.username,
+    profileId: state.auth.profileId,
+    authToken: state.auth.authToken,
+    isAdmin: state.auth.isAdmin,
+});
+
 const mapDispatchToProps = (dispatch: any) => ({
-  logout: () => dispatch(Actions.auth.logout()),
-  navigateTo: (location: string) => dispatch(push(location)),
-  fetchAuthToken: () => dispatch(Actions.auth.fetchAuthToken()),
-  verifyToken: () => dispatch(Actions.auth.verifyToken()),
-  setCurrentPrices: (data: currentPricesType) => dispatch(Actions.coins.setCurrentPrices(data)),
-  initializeSocketConnection: (tok: string) => dispatch(Actions.auth.initializeSocketConnection(tok)),
-})
+    logout: () => dispatch(Actions.auth.logout()),
+    navigateTo: (location: string) => dispatch(push(location)),
+    fetchAuthToken: () => dispatch(Actions.auth.fetchAuthToken()),
+    verifyToken: () => dispatch(Actions.auth.verifyToken()),
+    setCurrentPrices: (data: currentPricesType) => dispatch(Actions.coins.setCurrentPrices(data)),
+    initializeSocketConnection: (tok: string) => dispatch(Actions.auth.initializeSocketConnection(tok)),
+    checkIfAdmin: () => dispatch(Actions.auth.checkIfAdmin()),
+});
+
 export default connect(mapStateToProps, mapDispatchToProps)(MenuBar)
