@@ -16,13 +16,11 @@ def up(db):
             Coin.create(name='Bitcoin', symbol='BTC')
             Coin.create(name='Ethereum', symbol='ETH')
             Coin.create(name='Litecoin', symbol='LTC')
-            Coin.create(name='XRP', symbol='XRP')
-            Coin.create(name='Monero', symbol='XMR')
-            Coin.create(name='Chainlink', symbol='LINK')
             Coin.create(name='Neo', symbol='NEO')
-            Coin.create(name='Coin 3', symbol='CO3')
-            Coin.create(name='Coin 4', symbol='CO4')
-            Coin.create(name='Coin 5', symbol='CO5')
+            Coin.create(name='Monero', symbol='XMR')
+            Coin.create(name='OmiseGO', symbol='OMG')
+            Coin.create(name='Dash', symbol='DASH')
+
 
         global_indef = Game.create(name='Global Indefinite',
                                    starting_cash=10000.00,
@@ -34,7 +32,7 @@ def up(db):
         Achievement.create(name="Win", description="Finish in first place in a private game")
         Achievement.create(name="Double net worth", description="Achieved by doubling your net worth in a game")
         Achievement.create(name="Identity Crisis", description="Change your username")
-        
+
         # insert goals into database
         Goal.create(name="Entrepreneur", description="Create a private game")
 

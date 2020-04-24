@@ -122,7 +122,7 @@ def begin(cb=None):
             time.sleep(WAIT)
     elif env == 'production':
         while True:
-            tickers = list(ping('BTC', 'ETH', 'LTC'))
+            tickers = list(ping('BTC', 'ETH', 'LTC', 'NEO', 'OMG', 'XMR', 'DASH'))
             if cb is not None: cb(tickers)
             time.sleep(WAIT)
 
