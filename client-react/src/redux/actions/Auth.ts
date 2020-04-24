@@ -38,7 +38,7 @@ async function fetchToken() {
 export const login = (username: string, password: string) => {
   return async (dispatch: Dispatch<Action>, store: () => RootState) => {
     // replace this with an api module assumedly
-    // const res = await axios.post('//api/login', {email, password})
+    // const res = await axios.post('/api/auth/login', {email, password})
     // just an example
     dispatch({type: Type.LOGIN});
     let res: AuthTokenResponse;
