@@ -10,7 +10,7 @@ export const getUsers = () => {
     return async (dispatch: Dispatch<Action>, store: () => RootState) => {
         try {
             await fetchAuthToken();
-            const res = await axios.get('http://localhost:5000/users');
+            const res = await axios.get('/users');
 
             dispatch({type: Type.SET_USERS, payload: res.data});
         } catch (e) {
@@ -28,7 +28,7 @@ export const notifyUser = (message: string, userId?: number) => {
         try {
             await fetchAuthToken();
             await axios.post(
-                `http://localhost:5000/notification${userId ? '/' + userId : ''}`,
+                `/notification${userId ? '/' + userId : ''}`,
                 { message }
             );
             dispatch({type: Type.NOTIFY_USER_SUCCESS});
@@ -46,7 +46,7 @@ export const issueWarning = (userId: number, message: string) => {
         }
         try {
             await fetchAuthToken();
-            await axios.put(`http://localhost:5000/users/${userId}`, {message});
+            await axios.put(`/users/${userId}`, {message});
             dispatch({type: Type.USER_ACTION_SUCCESS});
         } catch (e) {
             handleAxiosError(e, dispatch, Type.USER_ACTION_FAILED);
@@ -58,7 +58,7 @@ export const issueBan = (userId: number) => {
     return async (dispatch: Dispatch<Action>, store: () => RootState) => {
         try {
             await fetchAuthToken();
-            await axios.delete(`http://localhost:5000/users/${userId}`);
+            await axios.delete(`/users/${userId}`);
             dispatch(getUsers() as any);
             dispatch({type: Type.USER_ACTION_SUCCESS});
         } catch (e) {
@@ -72,7 +72,7 @@ export const getReports = (page: number, numPerPage: number = 9) => {
         try {
             await fetchAuthToken();
             const res = await axios.get(
-                'http://localhost:5000/reports/',
+                '/reports/',
                 { params: { sortByStatusDescending: true, numPerPage: numPerPage, page: page } }
             );
             dispatch({type: Type.GET_REPORTS_SUCCESS, payload: res.data});
@@ -95,7 +95,7 @@ export const updateReport = (
         try {
             await fetchAuthToken();
             await axios.put(
-                `http://localhost:5000/reports/${reportId}`,
+                `/reports/${reportId}`,
                 {
                     userAction: selectedAction.toLowerCase(),
                     message: warningMessage
@@ -114,7 +114,7 @@ export const createReport = (messageID: number) => {
         try {
             await fetchAuthToken();
             const res = await axios.post(
-                'http://localhost:5000/reports/',
+                '/reports/',
                 {messageID: messageID}
             );
             // TODO: dispatch appropriate stuff if given time

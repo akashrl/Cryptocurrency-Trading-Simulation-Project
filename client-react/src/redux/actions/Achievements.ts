@@ -8,7 +8,7 @@ import {fetchAuthToken} from "./Auth";
 export const getAchievements = () => {
     return async (dispatch: Dispatch<Action>) => {
         try {
-            const res = await axios.get('http://localhost:5000/achievement');
+            const res = await axios.get('/achievement');
             dispatch({type: Type.SET_ACHIEVEMENTS, payload: res.data});
         } catch (e) {
             handleAxiosError(e, dispatch, Type.SET_ACHIEVEMENTS_FAILED);
@@ -20,7 +20,7 @@ export const getAchievementProfile = () => {
     return async (dispatch: Dispatch<Action>) => {
         try {
             await fetchAuthToken();
-            const res = await axios.get('http://localhost:5000/achievement/profile');
+            const res = await axios.get('/achievement/profile');
             dispatch({type: Type.SET_ACHIEVEMENT_PROFILE, payload: res.data.achievementProfile });
         } catch (e) {
             handleAxiosError(e, dispatch, Type.SET_ACHIEVEMENTS_FAILED);
@@ -31,7 +31,7 @@ export const getAchievementProfile = () => {
 export const getGoals = () => {
     return async (dispatch: Dispatch<Action>) => {
         try {
-            const res = await axios.get('http://localhost:5000/goal');
+            const res = await axios.get('/goal');
             dispatch({type: Type.SET_GOALS, payload: res.data});
         } catch (e) {
             handleAxiosError(e, dispatch, Type.SET_ACHIEVEMENTS_FAILED);
@@ -43,7 +43,7 @@ export const getGoalProfile = () => {
     return async (dispatch: Dispatch<Action>) => {
         try {
             await fetchAuthToken();
-            const res = await axios.get('http://localhost:5000/goal/profile');
+            const res = await axios.get('/goal/profile');
             dispatch({type: Type.SET_GOAL_PROFILE, payload: res.data.goalProfile });
         } catch (e) {
             handleAxiosError(e, dispatch, Type.SET_ACHIEVEMENTS_FAILED);
