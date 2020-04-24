@@ -19,6 +19,7 @@ def get_profile_to_notify(user_id: int):
     profile = Profile.get_or_none(Profile.id == user_id, ~Profile.is_admin)
     if not profile:
         raise BadRequest("Invalid user")
+    return profile
 
 
 @db.atomic()
