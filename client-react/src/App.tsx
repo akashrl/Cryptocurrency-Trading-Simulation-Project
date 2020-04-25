@@ -33,13 +33,13 @@ function App() {
             render={({ match, history }) => {
               return <Game gameId={match.params.gameId} history={history} />;
             }}
-          />
+            exact />
           <Route
             path="/game/:gameId"
             render={({ match, history }) => {
               return <Game gameId={match.params.gameId} history={history} />;
             }}
-          />
+            exact />
           <Route exact path="/" component={Landing} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
